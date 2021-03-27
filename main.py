@@ -27,17 +27,16 @@ for i in range(8):
 n_exp = 26
 n_user = 13
 
-# Descomentar para fazer as 8 vezes
-#for i in range(8):
 
-list_of_labels = []
-for lab in info_labels:
-	if int(lab[0]) == n_exp and int(lab[1]) == n_user:
-		list_of_labels += [[lab[2], lab[3], lab[4]]]
-# print(f"{lab[0]} {lab[1]}")
-# print(list_of_labels)
+for i in range(8):
+	list_of_labels = []
+	for lab in info_labels:
+		if int(lab[0]) == n_exp and int(lab[1]) == n_user:
+			list_of_labels += [[lab[2], lab[3], lab[4]]]
+			# print(f"{lab[0]} {lab[1]}")
+			# print(list_of_labels)
 
-functions.plotting(info_users[i], n_exp, n_user, list_of_labels)
-n_exp += 1
-if i % 2 == 1:
-	n_user += 1
+	functions.plotting(info_users[i], n_exp, n_user, list_of_labels)
+	n_exp += 1
+	if i % 2 == 1:
+		n_user += 1

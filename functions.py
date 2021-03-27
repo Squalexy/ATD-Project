@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 activity_labels = ["WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTRAIRS", "SITTING", "STANDING", "LAYING",
                    "STAND_TO_SIT", "SIT_TO_STAND", "SIT_TO_LIE", "LIE_TO_SIT", "STAND_TO_LIE", "LIE_TO_STANF"]
 
-colors = ['black', 'red', 'blue', 'orange', 'green', 'red', 'purple', 'pink', 'olive', 'cyan']
-
 
 def plotting(info, n_exp, n_user, list_of_labels):
 	# -------------- GET DATA FOR PLOTTING --------------
