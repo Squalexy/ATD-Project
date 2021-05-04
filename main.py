@@ -1,49 +1,59 @@
 import numpy as np
 import functions
 
-# %% 1 -- RETRIEVE DATA FROM TXT FILES
-
-info_users = []
-info_labels = np.genfromtxt("HAPT_DATA_set\\RawData\\labels.txt", dtype=int)
-# print("Info:", info_labels)
-
-n_exp = 26
-n_user = 13
-
-# ACCOUNT EXPERIENCE data
-for i in range(8):
-	info_users.append(
-		np.genfromtxt("HAPT_data_set\\RawData\\acc_exp" + str(
-			n_exp) + "_user" + str(n_user) + ".txt", dtype='float'))
-
-	n_exp += 1
-	if i % 2 == 1:
-		n_user += 1
-
-functions.main_menu()
+activity_labels = ["WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTRAIRS", "SITTING", "STANDING", "LAYING",
+                   "STAND_TO_SIT", "SIT_TO_STAND", "SIT_TO_LIE", "LIE_TO_SIT", "STAND_TO_LIE", "LIE_TO_STAND"]
 
 
-# %% 2 -- PLOTTING
+def main():
+	# retrieve data from txt files
+	path_to_labels = "HAPT_DATA_set\\RawData\\labels.txt"
+	path_to_exp = "HAPT_data_set\\RawData\\acc_exp.txt"
+	info_users, info_labels = functions.retrieve_data(path_to_labels, path_to_exp)
 
-n_exp = 26
-n_user = 13
+	# main menu
+	functions.main_menu()
 
-for i in range(8):
-	list_of_labels = []
-	for lab in info_labels:
+	while True:
 
-		# 26 13 5 304 1423 --> lab[0] = n_exp
-		# 26 13 7 1574 1711 --> lab[1] = n_user
-		# 26 13 4 1712 2616 --> lab[2] = label atividade
-		# 26 13 8 2617 2758 --> lab[3] = xmin atividade
-		# 26 13 5 2759 3728 --> lab[4] = xmax atividade
+		if int(input()) == 1:
+			functions.ex2(info_labels, info_users)
 
-		if int(lab[0]) == n_exp and int(lab[1]) == n_user:
-			list_of_labels += [[lab[2], lab[3], lab[4]]]
+		elif int(input()) == 2:
+			functions.dft_menu()
+			while True:
 
-			# [[5, 304, 1423], [7, 1574, 1711],...]
+				if int(input()) == 1:
+					functions.single_dft_menu()
+					n_exp, n_user, label = int(input()), int(input()), str(input())
+					while functions.validate_data(n_exp, n_user, label) is False:
+						n_exp, n_user, label = int(input()), int(input()), str(input())
 
-	functions.plotting(info_users[i], n_exp, n_user, list_of_labels)
-	n_exp += 1
-	if i % 2 == 1:
-		n_user += 1
+					functions.plot_dft_menu()
+					window, step, overlap = str(input()), int(input()), int(input())
+					window_signal, window_title = functions.get_window(window)
+
+					functions.fourier_single(label, window_signal, step, overlap, info_labels, n_exp, n_user)
+
+				elif int(input()) == 2:
+					functions.plot_dft_menu()
+
+				elif int(input()) == 3:
+					break
+				elif int(input()) == 4:
+					exit(0)
+				else:
+					print("Wrong option. Try again...")
+
+		elif int(input()) == 3:
+			pass
+
+		elif int(input()) == 4:
+			exit(0)
+
+		else:
+			print("Wrong option. Try again...")
+
+
+if __name__ == "__main__":
+	main()
