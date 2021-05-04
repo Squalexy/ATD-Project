@@ -20,21 +20,28 @@ for i in range(8):
 	if i % 2 == 1:
 		n_user += 1
 
-# LABELS data
+functions.main_menu()
+
 
 # %% 2 -- PLOTTING
 
 n_exp = 26
 n_user = 13
 
-
 for i in range(8):
 	list_of_labels = []
 	for lab in info_labels:
+
+		# 26 13 5 304 1423 --> lab[0] = n_exp
+		# 26 13 7 1574 1711 --> lab[1] = n_user
+		# 26 13 4 1712 2616 --> lab[2] = label atividade
+		# 26 13 8 2617 2758 --> lab[3] = xmin atividade
+		# 26 13 5 2759 3728 --> lab[4] = xmax atividade
+
 		if int(lab[0]) == n_exp and int(lab[1]) == n_user:
 			list_of_labels += [[lab[2], lab[3], lab[4]]]
-			# print(f"{lab[0]} {lab[1]}")
-			# print(list_of_labels)
+
+			# [[5, 304, 1423], [7, 1574, 1711],...]
 
 	functions.plotting(info_users[i], n_exp, n_user, list_of_labels)
 	n_exp += 1
