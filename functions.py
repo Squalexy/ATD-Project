@@ -110,11 +110,48 @@ def get_window(option):
 	return window_signal, window_title
 
 
+def calculate_dft(sequence):
+	pass
+
+
 # DFT for a single experience
-def fourier_single(label, window, step, overlap, info, n_exp, n_user):
-	t = np.arange(0, len(info) * 0.02, 0.02)
-	axis = list(zip(*info))
+def fourier_single(info_labels, label, window_option, step, overlap, info_user, n_exp, n_user):
+	intervals = []  # Lista para guardar os intervalos da atividade pretendida
+	for lab in info_labels:
+		if int(lab[0]) == n_exp and int(lab[1]) == n_user and int(lab[2]) - 1 == activity_labels.index(label):
+			intervals.append([lab[3], lab[4]])
+
+	# a partir daqui nao está bem
+
+	# t = np.arange(0, len(info_users) * 0.02, 0.02)
+	axis = list(zip(*info_user))
+
 	axis_x, axis_y, axis_z = axis[0], axis[1], axis[2]
+
+	# fig, axs = plt.subplots(3)
+	# plt.figure()
+	# fig.suptitle("acc_exp" + str(n_exp) + "_user" + str(n_user) + ".txt")
+
+	# dft for all intervals
+	for interval in intervals:
+		window = get_window(window_option, interval[1] - interval[0])
+		# Para o eixo axis_x  v
+		x = np.linspace(0, 1, interval[1] - interval[0], endpoint=False)
+		y = axis_x[interval[0]: interval[1]]
+		axis_x_fft = fft(y)
+		axis_x_fft_w = fft(np.multiply(y, window))
+
+		plt.figure()
+		plt.title("Activity " + label)
+		plt.plot(x, axis_x_fft, 'b', x, axis_x_fft_w, 'r')
+		plt.show()
+
+	#  ^
+
+
+# calculate the dft
+
+# plot the dft
 
 
 # DFT for a single experience, applied to all experiences

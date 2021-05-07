@@ -13,6 +13,20 @@ def main():
 	info_users, info_labels = functions.retrieve_data(path_to_labels, path_to_exp)
 	print("Data retrieved!\n")
 
+	# info_users -> acc_expXX_userYY.txt
+	#                0.4333333437219827 0.01944444533917746 0.8930556332257938
+	#                0.4277777761889662 0.01805555649491447 0.8763889306267443
+	#                0.4402778031382534 -0.004166666912662869 0.9027777791608564
+	#                0.4402778031382534 -0.004166666912662869 0.9027777791608564
+	#                ...
+
+	# info_labels -> labels.txt
+	#                26 13 5 304 1423
+	#                26 13 7 1574 1711
+	#                26 13 4 1712 2616
+	#                26 13 8 2617 2758
+	#                ...
+
 	while True:
 		# main menu
 		functions.main_menu()
@@ -29,6 +43,7 @@ def main():
 
 				choice = int(input())
 				if choice == 1:
+
 					functions.single_dft_menu()
 					n_exp, n_user, label = int(input()), int(input()), str(input())
 					while functions.validate_data(n_exp, n_user, label) is False:
@@ -36,9 +51,8 @@ def main():
 
 					functions.plot_dft_menu()
 					window, step, overlap = str(input()), int(input()), int(input())
-					window_signal, window_title = functions.get_window(window)
 
-					functions.fourier_single(label, window_signal, step, overlap, info_labels, n_exp, n_user)
+					functions.fourier_single(info_labels, label, window, step, overlap, info_users[n_exp - 26], n_exp, n_user)
 
 				elif choice == 2:
 					functions.plot_dft_menu()
