@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 activity_labels = ["WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTRAIRS", "SITTING", "STANDING", "LAYING",
                    "STAND_TO_SIT", "SIT_TO_STAND", "SIT_TO_LIE", "LIE_TO_SIT", "STAND_TO_LIE", "LIE_TO_STAND"]
 
+dynamic_activity_labels = ["WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTRAIRS"]
+
 
 # %% Exercise 1
 
@@ -115,7 +117,7 @@ def calculate_dft(sequence):
 
 
 # DFT for a single experience
-def fourier_single(info_labels, label, window_option, step, overlap, info_user, n_exp, n_user):
+def fourier_single(info_labels, label, window_option, info_user, n_exp, n_user):
 	intervals = []  # Lista para guardar os intervalos da atividade pretendida
 	for lab in info_labels:
 		if int(lab[0]) == n_exp and int(lab[1]) == n_user and int(lab[2]) - 1 == activity_labels.index(label):
@@ -136,17 +138,20 @@ def fourier_single(info_labels, label, window_option, step, overlap, info_user, 
 	for interval in intervals:
 		window = get_window(window_option, interval[1] - interval[0])
 		# Para o eixo axis_x  v
-		x = np.linspace(0, 1, interval[1] - interval[0], endpoint=False)
+
+		x = np.linspace(-25, 25, interval[1] - interval[0], endpoint=False)
 		y = axis_x[interval[0]: interval[1]]
-		axis_x_fft = fft(y)
-		axis_x_fft_w = fft(np.multiply(y, window))
+
+		axis_x_fft = abs(fftshift(fft(y)))
+		axis_x_fft_w = abs(fftshift(fft(np.multiply(y, window))))
 
 		plt.figure()
 		plt.title("Activity " + label)
 		plt.plot(x, axis_x_fft, 'b', x, axis_x_fft_w, 'r')
 		plt.show()
 
-	#  ^
+
+#  ^
 
 
 # calculate the dft
@@ -178,12 +183,7 @@ def dft_menu():
 
 
 def single_dft_menu():
-	print("input: <n_exp> <n_user> <label>")
-
-
-def plot_dft_menu():
-	print("----------\nWindows available\n----------\n-> rect\n-> triang\n-> gauss\n-> hamming\n")
-	print("input: <window> <step> <overlap>")
+	print("input: <n_exp> <n_user> <label> <window>")
 
 
 def all_dft_menu():
@@ -199,7 +199,7 @@ def validate_data(n_exp, n_user, label):
 	if 16 < n_user < 13:
 		print("Wrong n_user, must be between 13 and 16. Try again...")
 		return False
-	if label not in activity_labels:
-		print("Wrong label, must choose a valid label. Try again...")
+	if label not in dynamic_activity_labels:
+		print("Wrong label, must choose a valid dynamic activity. Try again...")
 		return False
 	return True

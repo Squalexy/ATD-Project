@@ -45,17 +45,17 @@ def main():
 				if choice == 1:
 
 					functions.single_dft_menu()
-					n_exp, n_user, label = int(input()), int(input()), str(input())
+					user_input = input().split()
+					n_exp, n_user, label, window = int(user_input[0]), int(user_input[1]), user_input[2], user_input[3]
 					while functions.validate_data(n_exp, n_user, label) is False:
-						n_exp, n_user, label = int(input()), int(input()), str(input())
+						user_input = input().split()
+						n_exp, n_user, label, window = int(user_input[0]), int(user_input[1]), user_input[2], user_input[3]
 
-					functions.plot_dft_menu()
-					window, step, overlap = str(input()), int(input()), int(input())
-
-					functions.fourier_single(info_labels, label, window, step, overlap, info_users[n_exp - 26], n_exp, n_user)
+					functions.fourier_single(info_labels, label, window, info_users[n_exp - 26], n_exp, n_user)
+					break
 
 				elif choice == 2:
-					functions.plot_dft_menu()
+					pass
 
 				elif choice == 3:
 					break
