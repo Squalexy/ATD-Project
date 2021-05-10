@@ -13,6 +13,10 @@ def main():
 	info_users, info_labels = functions.retrieve_data(path_to_labels, path_to_exp)
 	print("Data retrieved!\n")
 
+	all_experiences = functions.fourier(info_labels, "HAMMING", info_users)
+	# [LABEL, XMIN, XMAX, DFTX, DFTY, DFTZ]
+
+	# EIXOS X Y Z para user tal
 	# info_users -> acc_expXX_userYY.txt
 	#                0.4333333437219827 0.01944444533917746 0.8930556332257938
 	#                0.4277777761889662 0.01805555649491447 0.8763889306267443
@@ -38,36 +42,31 @@ def main():
 			print("Plot successful!\n")
 
 		elif choice == 2:
-			functions.dft_menu()
-			while True:
-
-				choice = int(input())
-				if choice == 1:
-
-					functions.single_dft_menu()
-					user_input = input().split()
-					n_exp, n_user, label, window = int(user_input[0]), int(user_input[1]), user_input[2], user_input[3]
-					while functions.validate_data(n_exp, n_user, label) is False:
-						user_input = input().split()
-						n_exp, n_user, label, window = int(user_input[0]), int(user_input[1]), user_input[2], user_input[3]
-
-					functions.fourier_single(info_labels, label, window, info_users[n_exp - 26], n_exp, n_user)
-					break
-
-				elif choice == 2:
-					pass
-
-				elif choice == 3:
-					break
-				elif choice == 4:
-					exit(0)
-				else:
-					print("Wrong option. Try again...")
+			functions.all_dft_menu()
+			user_input = input()
+			window = user_input
+			all_experiences = functions.fourier(info_labels, window, info_users)
 
 		elif choice == 3:
-			pass
+			while True:
+				functions.single_dft_menu()
+				user_input = input().split()
+				n_exp, n_user, label, window = int(user_input[0]), int(user_input[1]), user_input[2], user_input[3]
+				while functions.validate_data(n_exp, n_user, label) is False:
+					user_input = input().split()
+					n_exp, n_user, label, window = int(user_input[0]), int(user_input[1]), user_input[2], user_input[3]
+
+				label_intervals = functions.fourier_single(info_labels, label, window, info_users[n_exp - 26], n_exp, n_user)
+				break
 
 		elif choice == 4:
+			functions.experience_menu()
+			user_input = int(input())
+			while functions.validate_experience(user_input) is False:
+				user_input = int(input())
+			functions.plot_experience(all_experiences[user_input - 26])
+
+		elif choice == 5:
 			break
 
 		else:
