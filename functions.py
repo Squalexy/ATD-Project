@@ -112,21 +112,20 @@ def get_window(option):
 	return window_signal, window_title
 
 
-def calculate_dft(interval, axis_x, axis_y, axis_z, window_option):
-	window = get_window(window_option, interval[2] - interval[1])
-	# Para o eixo axis_x  v
+def calculate_dft(segment, axis_x, axis_y, axis_z, window_option):
+	window = get_window(window_option, segment[4] - segment[3])
 
-	x = np.linspace(-25, 25, interval[2] - interval[1], endpoint=False)
+	axis_x_detrended = signal.detrend(axis_x, type="constant")
+	axis_y_detrended = signal.detrend(axis_y, type="constant")
+	axis_z_detrended = signal.detrend(axis_z, type="constant")
 
-	y = axis_x[interval[1]: interval[2]]
-	# axis_x_fft = abs(fftshift(fft(y)))
-
+	y = axis_x_detrended[segment[3]: segment[4]]
 	axis_x_fft_w = abs(fftshift(fft(np.multiply(y, window))))
 
-	y = axis_y[interval[1]: interval[2]]
+	y = axis_y_detrended[segment[3]: segment[4]]
 	axis_y_fft_w = abs(fftshift(fft(np.multiply(y, window))))
 
-	y = axis_z[interval[1]: interval[2]]
+	y = axis_z_detrended[segment[3]: segment[4]]
 	axis_z_fft_w = abs(fftshift(fft(np.multiply(y, window))))
 
 	return axis_x_fft_w, axis_y_fft_w, axis_z_fft_w
@@ -161,28 +160,56 @@ def plot_experience(single_experience):
 				ax.plot(x, single_experience[j][5])
 				ax.set_xlabel(single_experience[j][0])
 
-	print("hey")
 	fig.align_labels()  # same as fig.align_xlabels(); fig.align_ylabels()
-	print("oh")
 	plt.show()
-	print("let's go")
+
+
+def plot_activity(experience):
+	print(f"Plotting all activities of {experience[0][0]}_{experience[0][1]}...")
+	print(len(experience))
+
+	for i in range(len(experience)):
+
+		print(f"Experience: {experience[i][0]}\nUser: {experience[i][1]}\n")
+		fig, axs = plt.subplots(3)
+		plt.figure()
+		fig.set_figheight(5)
+		fig.set_figwidth(10)
+		fig.suptitle("DFT - " + activity_labels[experience[i][2] - 1] + "(" + str(experience[i][0]) + "_" + str(experience[i][1]) + ")")
+
+		x = np.linspace(-25, 25, experience[i][4] - experience[i][3])
+
+		axs[0].plot(x, experience[i][5], 'blue')
+		axs[0].set_xlabel('Frequencies')
+		axs[0].set_ylabel('axis_x')
+
+		axs[1].plot(x, experience[i][6], 'orange')
+		axs[1].set_xlabel('Frequencies')
+		axs[1].set_ylabel('axis_y')
+
+		axs[2].plot(x, experience[i][7], 'green')
+		axs[2].set_xlabel('Frequencies')
+		axs[2].set_ylabel('axis_z')
+
+		plt.show()
+	print("Plot successful!\n")
 
 
 # DFT for a single experience
 def fourier_single(info_labels, label, window_option, info_user, n_exp, n_user):
-	label_intervals = []  # Lista para guardar os intervalos da atividade pretendida
-	intervals = []
+	single_experience = []  # Lista para guardar os intervalos da atividade pretendida
+	segment = []
 	for lab in info_labels:
 		if int(lab[0]) == n_exp and int(lab[1]) == n_user and int(lab[2]) - 1 == activity_labels.index(label):
-			intervals += [lab[2], lab[3], lab[4]]
+			segment += [lab[0], lab[1], lab[2], lab[3], lab[4]]
 
 			axis = list(zip(*info_user))
 			axis_x, axis_y, axis_z = axis[0], axis[1], axis[2]
 
-			fftx, ffty, fftz = calculate_dft(intervals, axis_x, axis_y, axis_z, window_option)
+			fftx, ffty, fftz = calculate_dft(segment, axis_x, axis_y, axis_z, window_option)
 
-			intervals += [fftx, ffty, fftz]
-		label_intervals += [intervals]
+			segment += [fftx, ffty, fftz]
+		single_experience += [segment]
 
 		axis_x_fft = abs(fftshift(fft(y)))
 		axis_x_fft_w = abs(fftshift(fft(np.multiply(y, window))))
@@ -200,7 +227,6 @@ def fourier(info_labels, window, info_user):
 	print("Calculating DFT for all experiencess...")
 
 	all_experiences = []
-	single_experience = []  # Lista para guardar todas as experiências
 	n_exp = 26
 	n_user = 13
 
@@ -208,7 +234,7 @@ def fourier(info_labels, window, info_user):
 		for lab in info_labels:
 			segment = []  # Lista para guardar os intervalos da atividade pretendida
 			if int(lab[0]) == n_exp and int(lab[1]) == n_user:
-				segment += [lab[2], lab[3], lab[4]]
+				segment += [lab[0], lab[1], lab[2], lab[3], lab[4]]
 				axis = list(zip(*info_user[i]))
 				axis_x, axis_y, axis_z = axis[0], axis[1], axis[2]
 
@@ -218,7 +244,7 @@ def fourier(info_labels, window, info_user):
 				single_experience.append(segment)
 		all_experiences.append(single_experience)
 
-		# single_experience ---> [LABEL, XMIN, XMAX, DFTX, DFTY, DFTZ]
+		# single_experience ---> [N_EXP, N_USER, LABEL, XMIN, XMAX, DFTX, DFTY, DFTZ]
 		# all_experiences ---> [single_experience1, single_experience2, ...]
 
 		n_exp += 1
@@ -227,6 +253,7 @@ def fourier(info_labels, window, info_user):
 
 	print("Operation successful!\nAll_intervals = [experience 1: [label, xmin, xmax, fftx, ffty, fftz], ...]")
 	return all_experiences
+
 
 
 # %% MENUS

@@ -14,7 +14,8 @@ def main():
 	print("Data retrieved!\n")
 
 	all_experiences = functions.fourier(info_labels, "HAMMING", info_users)
-	# [LABEL, XMIN, XMAX, DFTX, DFTY, DFTZ]
+	# single_experience ---> vários arrays de [N_EXP, N_USER, LABEL, XMIN, XMAX, DFTX, DFTY, DFTZ]
+	# allexperiences ------> [single_experience1, single_experience2, ...]
 
 	# EIXOS X Y Z para user tal
 	# info_users -> acc_expXX_userYY.txt
@@ -56,7 +57,8 @@ def main():
 					user_input = input().split()
 					n_exp, n_user, label, window = int(user_input[0]), int(user_input[1]), user_input[2], user_input[3]
 
-				label_intervals = functions.fourier_single(info_labels, label, window, info_users[n_exp - 26], n_exp, n_user)
+				label_intervals = functions.fourier_single(info_labels, label, window, info_users[n_exp - 26], n_exp,
+				                                           n_user)
 				break
 
 		elif choice == 4:
@@ -64,7 +66,7 @@ def main():
 			user_input = int(input())
 			while functions.validate_experience(user_input) is False:
 				user_input = int(input())
-			functions.plot_experience(all_experiences[user_input - 26])
+			functions.plot_activity(all_experiences[user_input - 26])
 
 		elif choice == 5:
 			break
