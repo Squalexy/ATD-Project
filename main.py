@@ -7,13 +7,15 @@ activity_labels = ["WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTRAIRS", "SITTIN
 
 def main():
 	# retrieve data from txt files
-	print("Obtaining data from txt files...")
+	print("-------------------------------\nObtaining data from txt files...")
 	path_to_labels = "HAPT_DATA_set\\RawData\\labels.txt"
 	path_to_exp = "HAPT_data_set\\RawData\\acc_exp"
 	info_users, info_labels = functions.retrieve_data(path_to_labels, path_to_exp)
-	print("Data retrieved!\n")
+	print("Data retrieved!\n-------------------------------\n")
 
-	all_experiences = functions.fourier(info_labels, "HAMMING", info_users)
+	window = "gauss (size/2)"
+	all_experiences = functions.fourier(info_labels, window, info_users)
+
 	# single_experience ---> vários arrays de [N_EXP, N_USER, LABEL, XMIN, XMAX, DFTX, DFTY, DFTZ]
 	# allexperiences ------> [single_experience1, single_experience2, ...]
 
@@ -66,7 +68,7 @@ def main():
 			user_input = int(input())
 			while functions.validate_experience(user_input) is False:
 				user_input = int(input())
-			functions.plot_activity(all_experiences[user_input - 26])
+			functions.plot_activity(all_experiences[user_input - 26], window)
 
 		elif choice == 5:
 			break

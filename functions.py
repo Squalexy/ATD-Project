@@ -61,9 +61,9 @@ def plotting_ex2(info, n_exp, n_user, list_of_labels):
 	# -------------- PLOTTING --------------
 	fig, axs = plt.subplots(3)
 	plt.figure()
-	fig.suptitle("acc_exp" + str(n_exp) + "_user" + str(n_user) + ".txt")
+	fig.suptitle("acc_exp" + str(n_exp) + "_user" + str(n_user) + ".txt", weight='bold')
 
-	fig.set_figheight(5)
+	fig.set_figheight(10)
 	fig.set_figwidth(25)
 
 	axs[0].plot(t, axis_x, 'black')
@@ -77,13 +77,13 @@ def plotting_ex2(info, n_exp, n_user, list_of_labels):
 
 		axs[0].text(t[list_of_labels[i][1]] * 0.01, .1, "Teste" + str(i), transform=axs[0].transAxes, rotation=45)
 
-	axs[0].set_xlabel('Time (s)')
+	axs[0].set_xlabel('Time (s)', weight='bold')
 	axs[0].set_ylabel('ACC_X')
 
-	axs[1].set_xlabel('Time (s)')
+	axs[1].set_xlabel('Time (s)', weight='bold')
 	axs[1].set_ylabel('ACC_Y')
 
-	axs[2].set_xlabel('Time (s)')
+	axs[2].set_xlabel('Time (s)', weight='bold')
 	axs[2].set_ylabel('ACC_Z')
 
 	plt.show()
@@ -131,51 +131,18 @@ def calculate_dft(segment, axis_x, axis_y, axis_z, window_option):
 	return axis_x_fft_w, axis_y_fft_w, axis_z_fft_w
 
 
-def plot_experience(single_experience):
-	fig = plt.figure(figsize=(10, 5))
-	gs = gridspec.GridSpec(3, len(single_experience))
-
-	for i in range(3):
-		ax = fig.add_subplot(gs[i, 0])
-		x = np.linspace(-25, 25, single_experience[0][2] - single_experience[0][1])
-		if i == 0:
-			ax.set_ylabel("Axis_X")
-			ax.plot(x, single_experience[0][3])
-		elif i == 1:
-			ax.set_ylabel("Axis_Y")
-			ax.plot(x, single_experience[0][4])
-		elif i == 2:
-			ax.set_ylabel("Axis_Z")
-			ax.set_xlabel(single_experience[0][0])
-			ax.plot(x, single_experience[0][5])
-
-		for j in range(1, len(single_experience)):
-			ax = fig.add_subplot(gs[i, j])
-			x = np.linspace(-25, 25, single_experience[j][2] - single_experience[j][1])
-			if i == 0:
-				ax.plot(x, single_experience[j][3])
-			elif i == 1:
-				ax.plot(x, single_experience[j][4])
-			else:
-				ax.plot(x, single_experience[j][5])
-				ax.set_xlabel(single_experience[j][0])
-
-	fig.align_labels()  # same as fig.align_xlabels(); fig.align_ylabels()
-	plt.show()
-
-
-def plot_activity(experience):
+def plot_activity(experience, window):
 	print(f"Plotting all activities of {experience[0][0]}_{experience[0][1]}...")
 	print(len(experience))
 
 	for i in range(len(experience)):
-
 		print(f"Experience: {experience[i][0]}\nUser: {experience[i][1]}\n")
 		fig, axs = plt.subplots(3)
 		plt.figure()
 		fig.set_figheight(5)
 		fig.set_figwidth(10)
-		fig.suptitle("DFT - " + activity_labels[experience[i][2] - 1] + "(" + str(experience[i][0]) + "_" + str(experience[i][1]) + ")")
+		fig.suptitle("DFT - " + activity_labels[experience[i][2] - 1] + "(" + str(experience[i][0]) + "_" + str(
+			experience[i][1]) + ")\nWINDOW: " + window)
 
 		x = np.linspace(-25, 25, experience[i][4] - experience[i][3])
 
@@ -224,7 +191,7 @@ def fourier_single(info_labels, label, window_option, info_user, n_exp, n_user):
 # Guarda array com informaçóes, de todas as experiências
 # Cada experiência tem o seguinte array: [LABEL, XMIN, XMAX, DFTX, DFTY, DFTZ]
 def fourier(info_labels, window, info_user):
-	print("Calculating DFT for all experiencess...")
+	print("-------------------------------\nCalculating DFT for all experiencess...")
 
 	all_experiences = []
 	n_exp = 26
@@ -251,7 +218,10 @@ def fourier(info_labels, window, info_user):
 		if i % 2 == 1:
 			n_user += 1
 
-	print("Operation successful!\nAll_intervals = [experience 1: [label, xmin, xmax, fftx, ffty, fftz], ...]")
+	print("Operation successful!")
+	print("SEGMENT: [n_exp, n_user, label, xmin, xmax, fftz, ffty, fftz]")
+	print("Single experience: [segment1, segment2, semgent3,...]")
+	print("All_experiences = [single_experience_1, single_experience_2,...]\n-------------------------------\n")
 	return all_experiences
 
 
@@ -298,3 +268,36 @@ def validate_experience(n_exp):
 	if 33 < n_exp < 26:
 		print("Wrong n_exp, must be between 26 and 33. Try again...")
 		return False
+
+
+"""def plot_experience(single_experience):
+	fig = plt.figure(figsize=(10, 5))
+	gs = gridspec.GridSpec(3, len(single_experience))
+
+	for i in range(3):
+		ax = fig.add_subplot(gs[i, 0])
+		x = np.linspace(-25, 25, single_experience[0][2] - single_experience[0][1])
+		if i == 0:
+			ax.set_ylabel("Axis_X")
+			ax.plot(x, single_experience[0][3])
+		elif i == 1:
+			ax.set_ylabel("Axis_Y")
+			ax.plot(x, single_experience[0][4])
+		elif i == 2:
+			ax.set_ylabel("Axis_Z")
+			ax.set_xlabel(single_experience[0][0])
+			ax.plot(x, single_experience[0][5])
+
+		for j in range(1, len(single_experience)):
+			ax = fig.add_subplot(gs[i, j])
+			x = np.linspace(-25, 25, single_experience[j][2] - single_experience[j][1])
+			if i == 0:
+				ax.plot(x, single_experience[j][3])
+			elif i == 1:
+				ax.plot(x, single_experience[j][4])
+			else:
+				ax.plot(x, single_experience[j][5])
+				ax.set_xlabel(single_experience[j][0])
+
+	fig.align_labels()  # same as fig.align_xlabels(); fig.align_ylabels()
+	plt.show()"""
