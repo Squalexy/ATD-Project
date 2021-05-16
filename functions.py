@@ -7,6 +7,36 @@ activity_labels = ["WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTRAIRS", "SITTIN
 dynamic_activity_labels = ["WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTRAIRS"]
 
 
+def extract_data(info_labels):
+	info_labels = pd.DataFrame(info_labels, columns=['exp', 'user', 'activity', 'xmin', 'xmax'])
+
+	features = []
+	for i in range(info_labels.shape[0]):
+		user = info_labels["user"][i]
+		exp = info_labels["exp"][i]
+		activity = info_labels["activity"][i]
+		xmin = info_labels["xmin"][i]
+		xmax = info_labels["xmax"][i]
+
+		df = pd.read_csv('HAPT_data_set\\RawData\\acc_exp%02d_user%02d.txt' % (exp, user), sep=' ',
+		                 names=['x', 'y', 'z'])
+
+		# Retrieves a pre-defined feature configuration file to extract all available features
+		cfg = tsfel.get_features_by_domain()
+
+		# Extract features
+		features.append(tsfel.time_series_features_extractor(cfg, df.iloc[xmin:xmax, :], 50))
+	features = pd.concat(features).reset_index(drop=True)
+	final = pd.concat([info_labels, features], axis=1, ignore_index=False)
+	final.to_csv("features.csv", index=False)
+
+	"""	
+	pd.set_option('display.max_columns', None)
+	pd.set_option('display.max_rows', None)
+	print(final)
+	"""
+
+
 # %% Exercise 1
 
 def retrieve_data(path_to_labels, path_to_exp):
@@ -268,36 +298,3 @@ def validate_experience(n_exp):
 	if 33 < n_exp < 26:
 		print("Wrong n_exp, must be between 26 and 33. Try again...")
 		return False
-
-
-"""def plot_experience(single_experience):
-	fig = plt.figure(figsize=(10, 5))
-	gs = gridspec.GridSpec(3, len(single_experience))
-
-	for i in range(3):
-		ax = fig.add_subplot(gs[i, 0])
-		x = np.linspace(-25, 25, single_experience[0][2] - single_experience[0][1])
-		if i == 0:
-			ax.set_ylabel("Axis_X")
-			ax.plot(x, single_experience[0][3])
-		elif i == 1:
-			ax.set_ylabel("Axis_Y")
-			ax.plot(x, single_experience[0][4])
-		elif i == 2:
-			ax.set_ylabel("Axis_Z")
-			ax.set_xlabel(single_experience[0][0])
-			ax.plot(x, single_experience[0][5])
-
-		for j in range(1, len(single_experience)):
-			ax = fig.add_subplot(gs[i, j])
-			x = np.linspace(-25, 25, single_experience[j][2] - single_experience[j][1])
-			if i == 0:
-				ax.plot(x, single_experience[j][3])
-			elif i == 1:
-				ax.plot(x, single_experience[j][4])
-			else:
-				ax.plot(x, single_experience[j][5])
-				ax.set_xlabel(single_experience[j][0])
-
-	fig.align_labels()  # same as fig.align_xlabels(); fig.align_ylabels()
-	plt.show()"""

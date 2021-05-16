@@ -16,6 +16,8 @@ def main():
 	window = "gauss (size/2)"
 	all_experiences = functions.fourier(info_labels, window, info_users)
 
+	functions.extract_data(info_labels)
+
 	# single_experience ---> vários arrays de [N_EXP, N_USER, LABEL, XMIN, XMAX, DFTX, DFTY, DFTZ]
 	# allexperiences ------> [single_experience1, single_experience2, ...]
 
