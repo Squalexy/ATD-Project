@@ -552,8 +552,8 @@ def main_menu():
 	      "5. Get important features\n"
 	      "6. Step calculation - frequency with biggest magnitude\n"
 	      "7. Sensibility and specificity\n"
-	      "9. Calculate STFT\n"
-	      "10. Exit\n")
+	      "8. Calculate STFT\n"
+	      "9. Exit\n")
 
 
 def single_dft_menu():
